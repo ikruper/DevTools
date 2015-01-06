@@ -68,14 +68,39 @@ def has_factors(n, low=None, high=None):
     return False
 
 def get_gcf(*values, **kw):
-    """Returns the greatest common factor of the numbers given."""
+    """Returns the greatest common factor of the numbers given.
+    
+    Parameters
+    ----------
+    
+    prime --
+        returns prime gcf"""
     return max(get_factors(*values, **kw))
 
 def get_lcm(*values, **kw):
-    return get_multiples(*values, **kw).next()
+    """Returns least common multiple of values
+    
+    Key Word Parameters
+    -------------------
+    """
+    return get_multiples(*values, common=True).next()
     
 def get_factors(*nums, **kw):
-    """Returns all factors of n excluding n."""
+    """Returns iterator of factors of nums
+        
+        Parameters
+        ----------
+        *args
+        nums --
+            *list or *tuple or ints
+
+        **kw 
+        common --
+            yields only common factors
+        
+        prime --
+            yields only prime factors
+        """
     common = kw.get('common',False)
     prime = kw.get('prime',False)
     def factor_(n):    
@@ -114,12 +139,21 @@ def is_prime(n):
                     range(3, up_to_root_n))
     n_is_evenly_divisible = 0 in quotients
     return False if n_is_evenly_divisible else True
-
-def get_n_ary_multiples(nums, stop=None):
-    multiples = tuple([get_multiples_of(num, stop) for num in nums])
-    return combine_gens(multiples)    
-    
+   
 def get_multiples(*nums, **kw):
+        """Returns iterator of multiples of nums
+        
+        Parameters
+        ----------
+        *args
+        nums --
+            *list or *tuple or ints
+
+        **kw
+        common --
+            returns only 
+            
+        """
         
         common = kw.get('common',False)
         assert isinstance(common, bool)
@@ -142,9 +176,27 @@ def get_multiples(*nums, **kw):
         
 
 def is_common_multiple(num, nums):
+    """Returns true if num is multiple of nums
+    
+    Parameters
+    ----------
+    num --
+        int
+        
+    nums --
+        list or tuple of ints"""
     return True if sum(map(lambda x: num % x, nums)) == 0 else False
 
 def is_common_factor(num, nums):
+    """Returns true if num is factor of nums
+    
+    Parameters
+    ----------
+    num --
+        int
+        
+    nums --
+        list or tuple of ints"""
     return True if sum(map(lambda x: x % num, nums)) == 0 else False
     
 def test():
