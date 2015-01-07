@@ -24,18 +24,14 @@ __all__ = [
 ]
 
 def main():
-#    stuff = [range(10) for x in range(10)]
-#    stuff2 = [3,(1,2,3),(22,45,20),[range(7)]]
-#    print unpack(*stuff)
+    stuff = [range(10) for x in range(10)]
+    stuff2 = [3,(1,2,3),(22,45,20),[range(7)]]
+    print unpack(*stuff)
 #    print unpack(*stuff2)
 #    print unpack('five', 'four', 'three', (22,5,10))
 #    print unpack('five', 'four', 'three', (22,5,10), string_safe=False)
-    @sequence(stop=50)  
-    def say(x):
-        print x
-    for _ in say(50):
-        print _
-    
+#    @sequence(stop=50)  
+    pass
     
     
 

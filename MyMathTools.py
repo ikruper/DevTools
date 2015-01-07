@@ -12,7 +12,7 @@ Created on Thu Jan 01 17:40:08 2015
 """
 from MyDevTools.MyDecorator import decorator
 from MyDevTools.MyAnalysisTools import histogram
-from MyDevTools.MyPerformanceTools import *
+from MyDevTools.MyPerformanceTools import unpack
 from MyDevTools.MyDebug import *
 import itertools
 import sys
@@ -31,14 +31,16 @@ __all__ = [
             "get_greatest_factor"
         ]
 
-
+@timeIt
 def main():
-    values = 14,21,28
-    printStuff(get_multiples(*values, stop_value=10000, common=True))
-    printStuff(get_factors(*values, prime=True, common=True))
+
+    assert have_common_factors(11,12,13,14,15,17,19,20)
+    values = 11,12,13,14,15,17,19,20
+    print get_lcm(*values, stop_value=100000, common=True)
+#    printStuff(get_factors(*values, prime=True, common=True))
     print '=============='
-    print get_gcf(*values, prime=True)
-    print get_lcm(*values)
+#    print get_gcf(*values, prime=True)
+#    print get_lcm(*values)
 #    printStuff(res)
 #    print res
 
@@ -48,6 +50,19 @@ def makeInt(f):
     def wrapper(*args,**kw):
         return int(f(*args,**kw))
     return wrapper
+
+
+def have_common_factors(*nums):
+    vals = unpack(*[list(get_factors(i, common=True)) for i in nums])
+    vals = histogram().push_all(vals)
+    have_common = [k for k,v in vals.items() if v == 1]    
+    return have_common
+
+
+    while searchables != list(fas_get_factors(n)) and counter <= max_iter:
+        counter, n = counter + 1, n + 20
+    print n, counter
+    
 
 @makeInt
 def root_(n):
