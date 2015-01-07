@@ -34,9 +34,11 @@ __all__ = [
 @timeIt
 def main():
 
-    assert have_common_factors(11,12,13,14,15,17,19,20)
-    values = 11,12,13,14,15,17,19,20
-    print get_lcm(*values, stop_value=100000, common=True)
+    assert have_common_factors(26,13)
+#    for i in xrange(1000):
+        
+#    values = 11,12,13,14,15,17,19,20
+#    print get_lcm(*values, stop_value=100000, common=True)
 #    printStuff(get_factors(*values, prime=True, common=True))
     print '=============='
 #    print get_gcf(*values, prime=True)
@@ -51,18 +53,15 @@ def makeInt(f):
         return int(f(*args,**kw))
     return wrapper
 
-
+@timeIt
 def have_common_factors(*nums):
-    vals = unpack(*[list(get_factors(i, common=True)) for i in nums])
-    vals = histogram().push_all(vals)
-    have_common = [k for k,v in vals.items() if v == 1]    
-    return have_common
-
-
-    while searchables != list(fas_get_factors(n)) and counter <= max_iter:
-        counter, n = counter + 1, n + 20
-    print n, counter
-    
+    vals = [set(get_factors(i, common=True)) for i in nums]
+    lens = map(lambda x: len(x), vals)
+    index = lens.index(max(lens))
+    master = vals.pop(index)
+    print vals
+    vals = reduce(lambda x,y: x | y, vals)
+    return True if vals - master == set([]) else False
 
 @makeInt
 def root_(n):
