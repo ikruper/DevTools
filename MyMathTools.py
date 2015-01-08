@@ -40,7 +40,7 @@ def main():
 #    print have_common_factors(*values)
 #    a = list(get_factors(*values))
     
-    print sorted(list(get_factors(20, prime=True)))
+    print sorted(list(get_factors(20)))
 #    print get_lcm(*values, stop_value=100000, common=True)
 #    printStuff(get_factors(*values, prime=True, common=True))
 #    print '=============='
@@ -126,6 +126,7 @@ def get_factors(*nums, **kw):
     prime = kw.get('prime',False)
     def factor_(n):    
         assert isinstance(n,int)
+        h = has_fac = np.vectorize(lambda x: n % x == False)        
         p = possible_factors = np.array(xrange(1,n+1))
         v = h(p)
         i = indicies = p[v]
@@ -135,11 +136,9 @@ def get_factors(*nums, **kw):
     factors = reduce(lambda x,y: x | y, factor_sets)
     common_factors = reduce(lambda x,y: x & y, factor_sets)
     res = common_factors if common else factors
-#    res = res if not prime else [num for num in res if not is_prime(num)]
     if prime:
         fast_primes = np.vectorize(lambda x: is_prime(x))
-        _nums = np.array([num for num in res])
-        print _nums        
+        _nums = np.array([num for num in res])      
         try:
             return _nums[fast_primes(_nums)]        
         except IndexError:
