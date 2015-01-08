@@ -10,6 +10,7 @@ Created on Thu Jan 01 17:40:08 2015
 @author: J
 
 """
+import numpy as np
 from MyDevTools.MyDecorator import decorator
 from MyDevTools.MyAnalysisTools import histogram
 from MyDevTools.MyPerformanceTools import unpack
@@ -33,18 +34,25 @@ __all__ = [
 
 @timeIt
 def main():
-
-    assert have_common_factors(26,13)
+    test()
 #    for i in xrange(1000):
-        
 #    values = 11,12,13,14,15,17,19,20
+#    print have_common_factors(*values)
+#    a = list(get_factors(*values))
+    
+    print sorted(list(get_factors(20, prime=True)))
 #    print get_lcm(*values, stop_value=100000, common=True)
 #    printStuff(get_factors(*values, prime=True, common=True))
-    print '=============='
+#    print '=============='
 #    print get_gcf(*values, prime=True)
 #    print get_lcm(*values)
 #    printStuff(res)
 #    print res
+
+def test():
+    assert not is_prime(8)
+    assert not is_prime(4)
+    assert is_prime(4)
 
 @decorator
 def makeInt(f):
@@ -59,7 +67,6 @@ def have_common_factors(*nums):
     lens = map(lambda x: len(x), vals)
     index = lens.index(max(lens))
     master = vals.pop(index)
-    print vals
     vals = reduce(lambda x,y: x | y, vals)
     return True if vals - master == set([]) else False
 
@@ -98,62 +105,61 @@ def get_lcm(*values, **kw):
     -------------------
     """
     return get_multiples(*values, common=True).next()
-    
+
+#@timeIt    
 def get_factors(*nums, **kw):
-    """Returns iterator of factors of nums
+    """Factors inputs, returns iterator.
         
         Parameters
         ----------
-        *args
-        nums --
-            *list or *tuple or ints
-
-        **kw 
-        common --
-            yields only common factors
         
-        prime --
-            yields only prime factors
+        nums : *ints; or list or tuple of ints
+            The numbers to be factored
+            
+        common : boolean, optional
+            Output yields only common factors
+        
+        prime : boolean, optional
+            Output yields only prime factors
         """
     common = kw.get('common',False)
     prime = kw.get('prime',False)
     def factor_(n):    
         assert isinstance(n,int)
-        possible_factors = (num for num in xrange(2,root_(n)))
-        yield 1
-        try:
-            while possible_factors:
-                p = possible_factors.next()
-                q,r = divmod(n, p)        
-                try:
-                    p_not_a_factor = r != 0
-                    assert p_not_a_factor
-                except AssertionError:
-                    yield p
-                    yield q
-        finally:
-            yield n
-    factors = combined_gen([factor_(num) for num in nums])
-    common_factors = (factor for factor in factors 
-                        if is_common_factor(factor, nums))
+        p = possible_factors = np.array(xrange(1,n+1))
+        v = h(p)
+        i = indicies = p[v]
+        return frozenset(i)
+    factor_sets = [factor_(n) for n in nums]
+    assert isinstance(factor_sets[0], frozenset)
+    factors = reduce(lambda x,y: x | y, factor_sets)
+    common_factors = reduce(lambda x,y: x & y, factor_sets)
     res = common_factors if common else factors
-    return ((factor for factor in res if is_prime(factor)) if prime
-            else res)
+#    res = res if not prime else [num for num in res if not is_prime(num)]
+    if prime:
+        fast_primes = np.vectorize(lambda x: is_prime(x))
+        _nums = np.array([num for num in res])
+        print _nums        
+        try:
+            return _nums[fast_primes(_nums)]        
+        except IndexError:
+            print "Error"
+            return res
+    return (factor for factor in res)
 
 
 def is_prime(n):
     """Tests to see if n is prime"""
     
-    if n == 2: return True
-    if n % 2 == 0: 
+    if n in (1, 2, 3):
+        return True
+       
+    if not n % 2:
         return False
-    root_n = int(math.sqrt(n))+1
-    up_to_root_n = root_n
-    quotients = map(lambda divisor: n % divisor, 
-                    range(3, up_to_root_n))
-    n_is_evenly_divisible = 0 in quotients
-    return False if n_is_evenly_divisible else True
-   
+    nums = np.array(xrange(3,n,2))    
+    find_quotients = np.vectorize(lambda divisor: n % divisor == 0)
+    return not nums[find_quotients(nums)].any()
+           
 def get_multiples(*nums, **kw):
         """Returns iterator of multiples of nums
         
