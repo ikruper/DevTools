@@ -27,6 +27,8 @@ def main():
     stuff = [range(10) for x in range(10)]
     stuff2 = [3,(1,2,3),(22,45,20),[range(7)]]
     print unpack(*stuff)
+    print unpack(*[[1], [1, 2, 5, 10], [1, 2, 4, 5, 10, 20]])
+
 #    print unpack(*stuff2)
 #    print unpack('five', 'four', 'three', (22,5,10))
 #    print unpack('five', 'four', 'three', (22,5,10), string_safe=False)
@@ -107,6 +109,9 @@ def unpack(*items, **kw):
         return cache
     except:
         return items
+        
+def starunpack(items, **kw):
+    return unpack(*items, **kw)
 
 @decorator            
 def sequence(start=0, stop=False, step=1):

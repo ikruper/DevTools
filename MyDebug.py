@@ -59,19 +59,30 @@ callcounts = {}
 
 @decorator
 def trace(f):
+    output = ''
     indent = '   '
+    with open('trace.txt', 'wb') as fout:
+        pass
     def _f(*args):
+        output = ''
         signature = '%s(%s)' % (f.__name__, ', '.join(map(repr, args)))
-        print '%s--> %s' % (trace.level*indent, signature)
+        s = '%s--> %s' % (trace.level*indent, signature)
+        with open('trace.txt', 'a') as fout:
+            fout.write('{}\n'.format(s))
+        print s
         trace.level += 1
         try:
             result = f(*args)
-            print '%s<-- %s == %s' % ((trace.level-1)*indent,
+            s = '%s<-- %s == %s' % ((trace.level-1)*indent,
                                       signature, result)
+            with open('trace.txt', 'a') as fout:
+                fout.write('{}\n'.format(s))
+            print s
         finally:
             trace.level -= 1
         return result
     trace.level = 0
+   
     return _f
     
 @decorator
